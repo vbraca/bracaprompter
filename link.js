@@ -18,7 +18,7 @@
   const PEER_OPTIONS = { debug: 0 };
 
   const SAMPLE = [
-    'Welcome to your teleprompter.',
+    'Welcome to BracaPrompter.',
     '',
     'This is a sample script. Delete it, or paste your intro over it.',
     '',

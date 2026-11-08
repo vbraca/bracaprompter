@@ -154,8 +154,8 @@
     }
     box.classList.remove('hidden');
     const msgs = {
-      unpaired: ['Scan the code on the computer', 'Open the teleprompter on your computer, then point this phone’s camera at the QR code on the right side of the screen.'],
-      nohost: ['The teleprompter isn’t open', 'Open the teleprompter on the computer you paired with. This page connects by itself as soon as it’s open. If the code on the computer has changed, scan it again.'],
+      unpaired: ['Scan the code on the computer', 'Open BracaPrompter on your computer, then point this phone’s camera at the QR code on the right side of the screen.'],
+      nohost: ['BracaPrompter isn’t open', 'Open BracaPrompter on the computer you paired with. This page connects by itself as soon as it’s open. If the code on the computer has changed, scan it again.'],
       offline: ['No connection', 'Check that this phone is online. This page keeps trying by itself.'],
       connecting: ['Connecting…', ''],
     };

@@ -1,8 +1,8 @@
-# Teleprompter
+# BracaPrompter
 
 A teleprompter you control from your phone.
 
-**Use it:** https://vbraca.github.io/teleprompter/
+**Use it:** https://vbraca.github.io/bracaprompter/
 
 1. Open the site on the computer next to your camera and paste your script.
 2. Scan the QR code with your phone.
