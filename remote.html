@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0c0c0d">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Prompter">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-180.png">
+<title>Prompter Remote</title>
+<link rel="stylesheet" href="remote.css">
+</head>
+<body>
+<div id="app">
+  <header class="bar">
+    <button id="scriptBtn" class="script-btn" aria-label="Choose a script">
+      <span class="dot" id="dot"></span>
+      <span class="name" id="scriptName">Connecting…</span>
+      <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10l5 5 5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <button id="settingsBtn" class="icon-btn" aria-label="Display settings">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M4 7h9M19 7h1M4 17h3M13 17h7"/><circle cx="16" cy="7" r="2.6"/><circle cx="10" cy="17" r="2.6"/></g></svg>
+    </button>
+  </header>
+
+  <div id="banner" class="banner hidden"></div>
+
+  <section id="preview" class="preview" aria-label="Script. Tap a word to jump there.">
+    <div id="previewText"></div>
+  </section>
+
+  <div class="progress">
+    <div class="track"><div class="fill" id="fill"></div></div>
+    <div class="times"><span id="stateLabel">—</span><span id="left"></span></div>
+  </div>
+
+  <section id="pad" class="pad" aria-label="Tap to play or pause. Drag up or down to move the text.">
+    <div class="pad-icon" id="padIcon"></div>
+    <div class="pad-label" id="padLabel">Tap to play</div>
+    <div class="pad-hint" id="padHint">Drag up or down to move the text</div>
+  </section>
+
+  <div class="row nav">
+    <button class="btn" id="topBtn">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 5h12M12 19V9.5m0 0l-4.5 4.5M12 9.5l4.5 4.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Top
+    </button>
+    <button class="btn" id="backBtn">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 14.5L12 9l5.5 5.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Back a line
+    </button>
+    <button class="btn" id="fwdBtn">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 9.5L12 15l5.5-5.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Next line
+    </button>
+  </div>
+
+  <div class="row speed">
+    <button class="btn speed-btn" id="slower" aria-label="Slower">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 12h12" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
+    </button>
+    <div class="speed-val"><b id="wpm">—</b><span>words per minute</span></div>
+    <button class="btn speed-btn" id="faster" aria-label="Faster">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 12h12M12 6v12" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+</div>
+
+<div id="waiting" class="waiting">
+  <div class="waiting-card">
+    <div class="spinner"></div>
+    <h1 id="waitTitle">Connecting…</h1>
+    <p id="waitText"></p>
+  </div>
+</div>
+
+<div id="backdrop" class="backdrop"></div>
+
+<section id="scriptsSheet" class="sheet" aria-label="Scripts">
+  <header><h2>Scripts</h2><button class="done">Done</button></header>
+  <ul id="scriptsList" class="scripts-list"></ul>
+</section>
+
+<section id="settingsSheet" class="sheet" aria-label="Display settings">
+  <header><h2>Display</h2><button class="done">Done</button></header>
+  <div class="srow">
+    <span>Text size</span>
+    <div class="stepper"><button data-step="fontSize" data-d="-0.5" aria-label="Smaller text">−</button><output id="v-fontSize"></output><button data-step="fontSize" data-d="0.5" aria-label="Bigger text">+</button></div>
+  </div>
+  <div class="srow">
+    <span>Text width</span>
+    <div class="stepper"><button data-step="width" data-d="-4" aria-label="Narrower">−</button><output id="v-width"></output><button data-step="width" data-d="4" aria-label="Wider">+</button></div>
+  </div>
+  <div class="srow">
+    <span>Line spacing</span>
+    <div class="stepper"><button data-step="lineHeight" data-d="-0.05" aria-label="Tighter">−</button><output id="v-lineHeight"></output><button data-step="lineHeight" data-d="0.05" aria-label="Looser">+</button></div>
+  </div>
+  <div class="srow">
+    <span>Reading line</span>
+    <div class="stepper"><button data-step="readingLine" data-d="-4" aria-label="Move reading line up">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 14l5-5 5 5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button><output id="v-readingLine"></output><button data-step="readingLine" data-d="4" aria-label="Move reading line down">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10l5 5 5-5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button></div>
+  </div>
+  <div class="srow">
+    <span>Colors</span>
+    <div class="seg" data-key="theme"><button data-v="dark">White</button><button data-v="yellow">Yellow</button><button data-v="light">Light</button></div>
+  </div>
+  <div class="srow">
+    <span>Countdown</span>
+    <div class="seg" data-key="countdown"><button data-v="0">Off</button><button data-v="3">3 s</button><button data-v="5">5 s</button></div>
+  </div>
+  <div class="srow"><span>Dim lines already read</span><button class="switch" data-toggle="fade" aria-label="Dim lines already read"></button></div>
+  <div class="srow"><span>Mirror</span><button class="switch" data-toggle="mirrorX" aria-label="Mirror"></button></div>
+  <div class="srow"><span>Upside down</span><button class="switch" data-toggle="mirrorY" aria-label="Upside down"></button></div>
+  <div class="srow">
+    <span>Computer shows</span>
+    <div class="seg" id="modeSeg"><button data-mode="prompt">Prompter</button><button data-mode="edit">Editor</button></div>
+  </div>
+  <p class="tip">This page tries to keep your screen on while it's open. If your phone still locks mid-take, set Settings → Display &amp; Brightness → Auto-Lock to 5 minutes while you film.</p>
+</section>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.5.4/peerjs.min.js"></script>
+<script src="shared.js"></script>
+<script src="link.js"></script>
+<script src="remote.js"></script>
+</body>
+</html>

@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Teleprompter</title>
+<link rel="icon" href="icon-180.png">
+<link rel="stylesheet" href="prompter.css">
+</head>
+<body>
+
+<!-- ============ Editor (what you see at the computer) ============ -->
+<div id="editor" class="view">
+  <header class="topbar">
+    <div class="brand">
+      <svg class="logo" viewBox="0 0 24 24" aria-hidden="true"><rect width="24" height="24" rx="6" fill="var(--accent)"/><path d="M5 7.5h14M8 12h11M8 16.5h8" stroke="#1a1200" stroke-width="2" stroke-linecap="round"/><path d="M3.5 9.6l3 2.4-3 2.4z" fill="#1a1200"/></svg>
+      Teleprompter
+    </div>
+    <div class="status" id="phoneStatus"><span class="dot"></span><span class="label">Connecting…</span></div>
+  </header>
+
+  <main class="layout">
+    <aside class="library">
+      <div class="lib-head">
+        <h2>Scripts</h2>
+        <button id="newScript" class="btn small" title="New script">+ New</button>
+      </div>
+      <ul id="scriptList"></ul>
+      <label class="import" title="Import a .txt file (you can also drop one on this window)">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m0 0l-4-4m4 4l4-4M5 19h14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Import a text file
+        <input type="file" id="importFile" accept=".txt,.md,.text,text/plain">
+      </label>
+    </aside>
+
+    <section class="compose">
+      <input id="title" class="title-input" placeholder="Untitled script" maxlength="200" autocomplete="off">
+      <textarea id="text" placeholder="Paste or type your script here…"></textarea>
+      <div class="compose-foot">
+        <span class="meta" id="meta"></span>
+        <span class="save-state" id="saveState"></span>
+        <button id="deleteScript" class="btn ghost danger">Delete</button>
+        <button id="startBtn" class="btn primary big">Open prompter <kbd>⌘ ↵</kbd></button>
+      </div>
+      <p class="hint">
+        <span><code>[like this]</code> notes to yourself</span>
+        <span><code>*like this*</code> emphasis</span>
+        <span>blank line = new paragraph</span>
+      </p>
+    </section>
+
+    <aside class="side">
+      <section class="card phone-card">
+        <h2>Phone remote</h2>
+        <div class="qr" id="qr"></div>
+        <p class="url" id="remoteUrl">…</p>
+        <p class="small muted">Point your phone's camera at the code. Wi-Fi or cellular both work.</p>
+        <p class="small muted">The code stays the same on this computer, so you can save the remote to your phone's home screen.</p>
+        <p class="small muted">Scripts are saved in this browser only. The phone connects straight to this page.</p>
+      </section>
+
+      <section class="card">
+        <h2>Display</h2>
+        <div class="field">
+          <label for="fontSize">Text size</label>
+          <input type="range" id="fontSize" min="2" max="16" step="0.5">
+          <output data-for="fontSize"></output>
+        </div>
+        <div class="field">
+          <label for="lineHeight">Line spacing</label>
+          <input type="range" id="lineHeight" min="1" max="2.2" step="0.05">
+          <output data-for="lineHeight"></output>
+        </div>
+        <div class="field">
+          <label for="width">Text width</label>
+          <input type="range" id="width" min="30" max="100" step="1">
+          <output data-for="width"></output>
+        </div>
+        <div class="field">
+          <label for="readingLine">Reading line</label>
+          <input type="range" id="readingLine" min="8" max="80" step="1">
+          <output data-for="readingLine"></output>
+        </div>
+        <div class="field">
+          <label for="wpm">Speed</label>
+          <input type="range" id="wpm" min="40" max="400" step="5">
+          <output data-for="wpm"></output>
+        </div>
+        <div class="field">
+          <label>Colors</label>
+          <div class="seg" data-key="theme">
+            <button data-v="dark">White</button><button data-v="yellow">Yellow</button><button data-v="light">Light</button>
+          </div>
+        </div>
+        <div class="field">
+          <label>Align</label>
+          <div class="seg" data-key="align">
+            <button data-v="left">Left</button><button data-v="center">Center</button>
+          </div>
+        </div>
+        <div class="field">
+          <label>Countdown</label>
+          <div class="seg" data-key="countdown">
+            <button data-v="0">Off</button><button data-v="3">3 s</button><button data-v="5">5 s</button>
+          </div>
+        </div>
+        <label class="check"><input type="checkbox" id="fade"> Dim the lines you've already read</label>
+        <label class="check"><input type="checkbox" id="mirrorX"> Mirror (for teleprompter glass)</label>
+        <label class="check"><input type="checkbox" id="mirrorY"> Upside down</label>
+        <label class="check"><input type="checkbox" id="fullscreen"> Go full screen when the prompter opens</label>
+      </section>
+
+      <section class="card keys">
+        <h2>Keyboard</h2>
+        <dl>
+          <dt>Space</dt><dd>Play / pause</dd>
+          <dt>↑ ↓</dt><dd>Back / forward a line</dd>
+          <dt>← →</dt><dd>Slower / faster</dd>
+          <dt>[ ]</dt><dd>Smaller / bigger text</dd>
+          <dt>R</dt><dd>Back to the top</dd>
+          <dt>F</dt><dd>Full screen</dd>
+          <dt>Esc</dt><dd>Back to the editor</dd>
+        </dl>
+      </section>
+    </aside>
+  </main>
+  <div class="drop-hint" id="dropHint">Drop the text file to import it</div>
+</div>
+
+<!-- ============ Prompter (what you read from across the room) ============ -->
+<div id="prompter" class="view hidden" data-theme="dark">
+  <div id="mirror">
+    <div id="scroller">
+      <div id="textBody"></div>
+      <div id="endMark">end</div>
+    </div>
+    <div id="fade-above"></div>
+    <div id="marker"><span class="arrow left"></span><span class="arrow right"></span></div>
+    <div id="countdown"></div>
+    <div id="toast"></div>
+    <div id="pausedBadge">Paused</div>
+  </div>
+  <div id="hud"></div>
+  <div id="mouseBar">
+    <button id="mbEditor" class="mb">← Editor <kbd>Esc</kbd></button>
+    <button id="mbPlay" class="mb">Play <kbd>Space</kbd></button>
+    <button id="mbFull" class="mb">Full screen <kbd>F</kbd></button>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.5.4/peerjs.min.js"></script>
+<script src="shared.js"></script>
+<script src="link.js"></script>
+<script src="qr.js"></script>
+<script src="prompter.js"></script>
+</body>
+</html>
